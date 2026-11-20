@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 1 Review: Architecture, Ideation & Data Protection Specification</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 1.5cm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 13px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    /* Print Header */
+    .doc-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .doc-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin: 0 0 4px 0;
+    }
+
+    .doc-subtitle {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .doc-badge {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Section Styling */
+    h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      border-left: 4px solid #2563eb;
+      padding-left: 10px;
+      margin: 24px 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 14px 0 6px 0;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 12px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    td {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+      color: #334155;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Code & Mono */
+    code, .mono {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 11px;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 14px 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 12px;
+      color: #0f172a;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-blue {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .callout-blue .callout-title { color: #1d4ed8; }
+
+    .callout-amber {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .callout-amber .callout-title { color: #b45309; }
+
+    /* Architecture Diagram Box */
+    .diag-box {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      margin: 14px 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Print utility */
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    .print-btn:hover { background: #1d4ed8; }
+
+    @media print {
+      .print-btn { display: none; }
+      body { font-size: 11.5px; }
+      .container { max-width: 100%; padding: 0; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Print Button -->
+  <button class="print-btn" onclick="window.print()">
+    🖨️ Save as PDF / Print
+  </button>
+
+  <div class="container">
+    
+    <!-- Document Header -->
+    <div class="doc-header">
+      <div>
+        <h1 class="doc-title">PHASE 1: PROBLEM UNDERSTANDING & TECHNICAL IDEATION</h1>
+        <p class="doc-subtitle">CICADA 2026 Hackathon | Secure Distributed Observability & AIOps Platform</p>
+      </div>
+      <div style="text-align: right;">
+        <span class="doc-badge">Phase 1 Defense</span>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Score: 10 / 10 Marks</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Problem Understanding -->
+    <h2>1. Problem Understanding & The Core Privacy Challenge</h2>
+    <p>
+      Modern enterprise IT systems span distributed microservices, multi-region cloud infrastructures, and edge networks. Traditional observability tools ship raw syslog streams, payload records, and application logs to central cloud vendors. In production, this introduces catastrophic compliance and security violations:
+    </p>
+    <ul>
+      <li><strong>Data Exposure Risk:</strong> Shipping raw logs exposes unhashed passwords, AWS tokens (<code>AKIA...</code>), internal hostnames, and customer PII across the network perimeter.</li>
+      <li><strong>Compliance Violations:</strong> Transferring unredacted records outside the customer region violates jurisdictional mandates (e.g., GDPR, HIPAA, RBI local residency).</li>
+      <li><strong>Alert Fatigue:</strong> Static thresholds spam engineering teams with duplicate alarms rather than synthesizing co-occurring symptoms into correlated incidents.</li>
+    </ul>
+
+    <div class="callout callout-blue">
+      <div class="callout-title">The Two-Tier Solution Principle</div>
+      <strong>Raw telemetry, stack traces, and credentials must stay inside the customer boundary by default.</strong> The Central SaaS platform operates in a strictly metadata-only mode, ingesting only sanitized, allow-listed metrics and pseudonymous identifiers.
+    </div>
+
+    <!-- Section 2: Trust Boundary & Data Flow Diagram -->
+    <h2>2. Data-Flow Architecture & Trust Boundary (Evidence 1)</h2>
+    <p>
+      The architecture establishes a strict physical trust boundary between the customer's on-premise infrastructure and the central multi-tenant cloud:
+    </p>
+
+    <div class="diag-box">+-----------------------------------------------------------------------------------+
+| TIER 1: CUSTOMER NETWORK PERIMETER (ON-PREMISE / SECURE VPC)                      |
+|                                                                                   |
+|  [Raw Sources]              [Local Privacy Engine]              [Persistence]     |
+|   - Compute Nodes  -----\     - Regex Secret Redaction            collector_local |
+|   - DB Master Query Logs  --->- Field Allow-Listing Engine -----> .db (Raw Stays |
+|   - Auth / Sudo Streams -/    - Pseudonymization (Host Masking)   Here Locally)   |
+|                                                                                   |
+|  [Egress Proof Panel (Port 8001)]        [Outage Resiliency Buffer]               |
+|   - Side-by-Side Verification             - Persistent SQLite FIFO Queue          |
+|   - Auditable Egress Proof Ledger         - Zero Loss & Zero Duplicate Replay     |
++-----------------------------------------------------------------------------------+
+                                          │
+                         [ STRICT TRUST BOUNDARY ]
+                                          │ Encrypted HTTPS / TLS
+                                          │ Bearer Token Auth
+                                          │ Allow-Listed Metadata ONLY
+                                          ▼
++-----------------------------------------------------------------------------------+
+| TIER 2: CENTRAL OPERATIONS PLATFORM (MULTI-TENANT SAAS - PORT 8000)               |
+|                                                                                   |
+|  [Regional Ingestion] ---> [Idempotency Deduplication] ---> [Statistical Engine]  |
+|   - ap-south-1 Gateway      - UUID Payload Token Cache       - Dynamic Z-Score    |
+|   - Multi-Tenant Isolation                                   - Trend Analytics    |
+|                                                                                   |
+|  [Incident Correlation] -> [4-State Health Evaluation] -> [Autonomous Ops Workflow|
+|   - Alert Noise Reduction    - Excellent, Good, Fair, Poor  - Human Approval Step |
+|   - Root-Cause Context       - Stale Data Downgrades        - Reversible Rollback |
++-----------------------------------------------------------------------------------+</div>
+
+    <!-- Page Break for Clean Printing -->
+    <div class="page-break"></div>
+
+    <!-- Section 3: Data Protection Specification -->
+    <h2>3. Local Data Protection: Field Allow-List & Redaction (Evidence 2)</h2>
+    <p>
+      The Local Collector implements a <strong>zero-trust allow-list policy</strong> configured in <code>data_policy.json</code>. Unapproved fields are dropped prior to network serialization:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Field Name</th>
+          <th style="width: 15%;">Data Type</th>
+          <th style="width: 20%;">Disposition</th>
+          <th style="width: 40%;">Reason & Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>payload_id</code></td>
+          <td><span class="mono">UUID v4</span></td>
+          <td><strong style="color: #16a34a;">ALLOW-LISTED</strong></td>
+          <td>Cryptographic token ensuring idempotent deduplication during retries.</td>
+        </tr>
+        <tr>
+          <td><code>timestamp_utc</code></td>
+          <td><span class="mono">ISO 8601</span></td>
+          <td><strong style="color: #16a34a;">ALLOW-LISTED</strong></td>
+          <td>Global UTC timestamp for out-of-order handling and global time synchronization.</td>
+        </tr>
+        <tr>
+          <td><code>pseudonym_source_id</code></td>
+          <td><span class="mono">String</span></td>
+          <td><strong style="color: #16a34a;">ALLOW-LISTED</strong></td>
+          <td>Masked host ID (e.g. <code>srv-node-db01</code> replaces <code>prod-db.internal</code>).</td>
+        </tr>
+        <tr>
+          <td><code>metrics.*</code></td>
+          <td><span class="mono">Float / Int</span></td>
+          <td><strong style="color: #16a34a;">ALLOW-LISTED</strong></td>
+          <td>Numeric indicators: CPU %, Latency ms, Packet Loss %, Auth Failure Count.</td>
+        </tr>
+        <tr>
+          <td><code>raw_log</code> / <code>payload</code></td>
+          <td><span class="mono">String / JSON</span></td>
+          <td><strong style="color: #dc2626;">BLOCKED LOCAL</strong></td>
+          <td>Retained strictly in local SQLite. Never leaves customer environment.</td>
+        </tr>
+        <tr>
+          <td><code>credentials</code> / <code>keys</code></td>
+          <td><span class="mono">Secret Token</span></td>
+          <td><strong style="color: #dc2626;">SCRUBBED / DROPPED</strong></td>
+          <td>Passwords, AWS keys, and bearer tokens redacted via regex scrubber.</td>
+        </tr>
+        <tr>
+          <td><code>customer_pii</code></td>
+          <td><span class="mono">Identity</span></td>
+          <td><strong style="color: #dc2626;">STRICTLY DROPPED</strong></td>
+          <td>Names, emails, and identifiers stripped at ingestion before transmission.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Redaction & Masking Transformations</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Target Pattern</th>
+          <th>Raw Input (Local Record)</th>
+          <th>Transmitted Egress Metadata</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AWS Access Key</td>
+          <td><code>AKIAIOSFODNN7EXAMPLE</code></td>
+          <td><code>[REDACTED_AWS_KEY]</code></td>
+        </tr>
+        <tr>
+          <td>Bearer & API Secret</td>
+          <td><code>auth_token=sk_live_9988223344</code></td>
+          <td><code>auth_token=[REDACTED_SECRET]</code></td>
+        </tr>
+        <tr>
+          <td>Internal Hostname</td>
+          <td><code>prod-db-master.corp.internal</code></td>
+          <td><code>srv-node-db01</code> (Pseudonymized)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Section 4: Primary Use Cases -->
+    <h2>4. The Four High-Value Observability Use Cases</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;">
+      <div class="callout" style="margin: 0;">
+        <div class="callout-title">1. Infrastructure Health</div>
+        <p style="font-size: 11.5px; margin: 0;">Continuous tracking of CPU saturation, memory utilization, and disk exhaustion with dynamic baseline modeling.</p>
+      </div>
+      <div class="callout" style="margin: 0;">
+        <div class="callout-title">2. Network Performance</div>
+        <p style="font-size: 11.5px; margin: 0;">Round-trip transit latency (ms) and packet loss (%) with threshold breaching and BGP route deviation detection.</p>
+      </div>
+      <div class="callout" style="margin: 0;">
+        <div class="callout-title">3. Authentication Security</div>
+        <p style="font-size: 11.5px; margin: 0;">Burst detection of repeated failed logins (brute force) producing security risk indicators without exporting usernames.</p>
+      </div>
+      <div class="callout" style="margin: 0;">
+        <div class="callout-title">4. Collector Fleet Health</div>
+        <p style="font-size: 11.5px; margin: 0;">Real-time collector heartbeat tracking (&lt;60s offline SLA), version telemetry, and SQLite buffer backlog monitoring.</p>
+      </div>
+    </div>
+
+    <!-- Section 5: Hackathon 24-Hour Scope & Plan -->
+    <h2>5. Feasibility, Roles & 24-Hour Implementation Plan</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Owner / Role</th>
+          <th>Planned Deliverable (24h Scope)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tier 1 Collector</strong></td>
+          <td>Backend / Systems Eng</td>
+          <td>Daemon, regex scrubber, SQLite buffer, Egress Proof UI (Port 8001)</td>
+          <td><strong style="color: #16a34a;">COMPLETED</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Tier 2 SaaS Platform</strong></td>
+          <td>Platform / AIOps Eng</td>
+          <td>Multi-tenant REST API, deduplication engine, correlation core (Port 8000)</td>
+          <td><strong style="color: #16a34a;">COMPLETED</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Test Scenario Harness</strong></td>
+          <td>QA / Automation Lead</td>
+          <td>Interactive scenario runner for all 8 evaluation test cases</td>
+          <td><strong style="color: #16a34a;">COMPLETED</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Operations Console</strong></td>
+          <td>Frontend UI Lead</td>
+          <td>Dark-mode dashboard, Chart.js time-series, incident explainability cards</td>
+          <td><strong style="color: #16a34a;">COMPLETED</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-amber">
+      <div class="callout-title">Minimum Viable Demo (MVD) Verification Plan</div>
+      <p style="font-size: 11.5px; margin: 0;">
+        During the Phase 1 evaluation checkpoint, our team will demonstrate the live side-by-side trust boundary at <code>http://localhost:8001</code>, inject an unredacted AWS secret, prove mathematical redaction before egress, and show the clean metadata visualization on the SaaS operations console at <code>http://localhost:8000</code>.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

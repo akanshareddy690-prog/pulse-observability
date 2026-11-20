@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start SaaS Platform",
+      "type": "shell",
+      "command": "python run_saas.py",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "servers",
+        "panel": "dedicated",
+        "focus": false
+      }
+    },
+    {
+      "label": "Start Local Collector",
+      "type": "shell",
+      "command": "python run_collector.py",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "servers",
+        "panel": "dedicated",
+        "focus": false
+      }
+    },
+    {
+      "label": "Run Live Scenario Injector",
+      "type": "shell",
+      "command": "python demo/inject_scenarios.py",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "scenarios",
+        "panel": "dedicated",
+        "focus": true
+      }
+    },
+    {
+      "label": "🚀 Run Entire System (SaaS + Collector)",
+      "dependsOn": ["Start SaaS Platform", "Start Local Collector"],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "1. Central Platform (SaaS Port 8000)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_saas.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "2. Local Collector (Port 8001)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_collector.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "3. Scenario Injector (Interactive Demo)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/demo/inject_scenarios.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🚀 Start Full Platform (SaaS + Collector)",
+      "configurations": [
+        "1. Central Platform (SaaS Port 8000)",
+        "2. Local Collector (Port 8001)"
+      ],
+      "stopAll": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "policy_name": "CICADA-Local-Data-Protection-v1",
+  "version": "1.0.0",
+  "allow_listed_metadata_fields": [
+    "payload_id",
+    "timestamp_utc",
+    "source_timezone",
+    "tenant_id",
+    "collector_id",
+    "collector_version",
+    "pseudonym_source_id",
+    "category",
+    "severity",
+    "metrics",
+    "health_state",
+    "alert_summary"
+  ],
+  "disallowed_fields_strictly_blocked": [
+    "raw_log",
+    "payload",
+    "stack_trace",
+    "credentials",
+    "password",
+    "api_key",
+    "auth_token",
+    "user_identity",
+    "email",
+    "query_parameters",
+    "customer_pii"
+  ],
+  "redaction_rules": [
+    {
+      "name": "api_keys_and_tokens",
+      "pattern": "(?i)(api[_-]?key|secret|token|password|bearer|auth|access_key)[\\s:=\"']+([a-zA-Z0-9_\\-\\.\\/+=]{8,})",
+      "replacement": "$1=[REDACTED_SECRET]"
+    },
+    {
+      "name": "aws_access_key",
+      "pattern": "(AKIA[0-9A-Z]{16})",
+      "replacement": "[REDACTED_AWS_KEY]"
+    },
+    {
+      "name": "ip_address_masking",
+      "pattern": "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b",
+      "replacement": "192.168.x.x"
+    }
+  ]
+}

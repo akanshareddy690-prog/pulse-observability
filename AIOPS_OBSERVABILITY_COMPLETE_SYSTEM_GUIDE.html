@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pulse Platform: Complete System Architecture, Code & AIOps Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 1.6cm 1.4cm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.6;
+      font-size: 12.5px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    /* Header */
+    .header-box {
+      border-bottom: 2.5px solid #0f172a;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin: 0 0 4px 0;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .tag-badge {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Headings */
+    h2 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      border-left: 4px solid #2563eb;
+      padding-left: 10px;
+      margin: 28px 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    h3 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 18px 0 8px 0;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: #334155;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 11.5px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.03em;
+    }
+
+    td {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+      color: #334155;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Monospace */
+    code, .mono {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 10.5px;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+
+    /* Callouts */
+    .callout {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 14px 0;
+    }
+
+    .callout-blue {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .callout-blue strong { color: #1d4ed8; }
+
+    .callout-emerald {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .callout-emerald strong { color: #047857; }
+
+    /* Diagram Block */
+    .diagram-pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 14px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      line-height: 1.45;
+      margin: 14px 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .step-box {
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .print-btn:hover { background: #1d4ed8; }
+
+    @media print {
+      .print-btn { display: none; }
+      body { font-size: 11px; }
+      .container { max-width: 100%; padding: 0; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Print Button -->
+  <button class="print-btn" onclick="window.print()">
+    🖨️ Click to Save as PDF
+  </button>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="header-box">
+      <div>
+        <h1 class="title">PULSE OBSERVABILITY: COMPLETE SYSTEM GUIDE</h1>
+        <p class="subtitle">Architecture, Code Execution, Technologies & AIOps Engine Reference</p>
+      </div>
+      <div style="text-align: right;">
+        <span class="tag-badge">Master Reference</span>
+        <div style="font-size: 11px; color: #64748b; margin-top: 4px;">CICADA 2026 Hackathon</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Executive Summary -->
+    <h2>1. What Is Going On Here? (The Core Problem & Concept)</h2>
+    <p>
+      In enterprise environments, companies run hundreds of servers and databases. Traditional monitoring tools (like standard CloudWatch or Datadog agents) collect every raw log and stack trace and transfer them to an external cloud.
+    </p>
+    <div class="callout callout-blue">
+      <strong>The Fatal Security Flaw in Traditional Monitoring:</strong><br>
+      Raw application logs accidentally contain <strong>unhashed passwords, AWS access keys (<span class="mono">AKIA...</span>), database query parameters, customer credit cards, and confidential PII</strong>. Transferring this raw data outside the company's local network violates data residency laws (GDPR, HIPAA, RBI) and exposes credentials to cloud breach risks.
+    </div>
+    <p>
+      <strong>Our Solution: The Two-Tier Architecture.</strong> We decouple data collection from analytics:
+    </p>
+    <ul>
+      <li><strong>Tier 1 (Customer On-Premises Local Collector):</strong> Runs inside the customer's private network. It collects raw telemetry, scrubs passwords and secrets locally, stores the unredacted logs strictly in a local database that never leaves, and provides an <strong>Egress Proof Panel</strong>.</li>
+      <li><strong>Tier 2 (Central SaaS Platform):</strong> Operates strictly on sanitized metadata (CPU numbers, latency, timestamps). It runs dynamic statistical correlation (AIOps) to eliminate alert noise and suggests human-approved remediations.</li>
+    </ul>
+
+    <!-- Section 2: Architecture -->
+    <h2>2. System Architecture & The Strict Trust Boundary</h2>
+    <div class="diagram-pre">+---------------------------------------------------------------------------------------------+
+| TIER 1: CUSTOMER ON-PREMISE NETWORK (LOCAL COLLECTOR - PORT 8001)                           |
+|                                                                                             |
+|  [Raw Data Sources]               [Local Privacy Engine]               [Local Persistence]  |
+|   - CPU / RAM / Disk Metrics  -->   - Regex Secret Scrubber        -->   collector_local.db |
+|   - Transit Latency & Loss    -->   - Field Allow-Listing Engine   -->   (Raw data & secrets|
+|   - Raw Logs & Sudo Events    -->   - Hostname Pseudonymization    -->    NEVER leave here) |
+|                                                                                             |
+|  [Egress Proof Panel]             [Outage Resiliency Buffer]                                |
+|   - Live Transparency Screen        - SQLite Persistent FIFO Queue                          |
+|   - Side-by-Side Proof of Scrub     - Zero Loss & Zero Duplicate Replay                     |
++---------------------------------------------------------------------------------------------+
+                                                │
+                                    [ STRICT TRUST BOUNDARY ]
+                                                │ Authenticated HTTPS / TLS
+                                                │ Bearer Token: collector-secret-key-2026
+                                                │ Regional Header: X-Region: ap-south-1
+                                                │ Allow-Listed Metadata ONLY (No Raw Logs)
+                                                ▼
++---------------------------------------------------------------------------------------------+
+| TIER 2: CENTRAL OPERATIONS PLATFORM (MULTI-TENANT SAAS - PORT 8000)                         |
+|                                                                                             |
+|  [Regional Ingestion API]  --->  [Idempotency Deduplication]  --->  [AIOps Statistical Core]|
+|   - Tenant Partitioning           - In-Memory & DB UUID Token        - Dynamic Z-Score      |
+|   - UTC Timestamp Ordering          Cache (Drops Retried Dups)       - Sliding 30-sample μ,σ|
+|                                                                                             |
+|  [Correlation Engine]      --->  [4-State Health Evaluator]   --->  [Autonomous Ops Workflow|
+|   - Groups Co-occurring Spikes    - Excellent, Good, Fair, Poor      - Policy Guardrails    |
+|   - 1 Incident vs 3 Alerts        - Stale Data Auto-Downgrade        - Human Approval Button|
+|                                                                      - Immutable Audit Log  |
++---------------------------------------------------------------------------------------------+</div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Section 3: Technologies Used -->
+    <h2>3. Technologies Used & Why We Chose Them</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Technology</th>
+          <th style="width: 25%;">Where It Is Used</th>
+          <th style="width: 55%;">Why It Was Chosen (Engineering Justification)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Python 3 Standard Library</strong></td>
+          <td>Whole Backend (<span class="mono">collector.py</span>, <span class="mono">server.py</span>)</td>
+          <td><strong>100% Reliability & Zero Crashes.</strong> Requires zero external <span class="mono">pip</span> installs. Eliminates package conflicts, compilation errors, or internet outage risks during hackathon judging.</td>
+        </tr>
+        <tr>
+          <td><strong>ThreadingHTTPServer</strong></td>
+          <td>Ports 8000 & 8001 Web Servers</td>
+          <td>Multi-threaded HTTP handling. Background telemetry streaming runs concurrently without freezing or blocking browser dashboards.</td>
+        </tr>
+        <tr>
+          <td><strong>SQLite 3 (<span class="mono">sqlite3</span>)</strong></td>
+          <td><span class="mono">collector_local.db</span> & <span class="mono">saas_platform.db</span></td>
+          <td>Lightweight, ACID-compliant embedded database built into Python. Used locally for raw log retention and outage buffering, and centrally for multi-tenant metadata storage.</td>
+        </tr>
+        <tr>
+          <td><strong>Regex Engine (<span class="mono">re</span>)</strong></td>
+          <td>Local Secret Scrubber (<span class="mono">collector.py</span>)</td>
+          <td>High-speed deterministic pattern matching to detect and mask AWS access keys (<span class="mono">AKIA...</span>), bearer tokens, passwords, and private IPs.</td>
+        </tr>
+        <tr>
+          <td><strong>Statistical Math (<span class="mono">math</span>)</strong></td>
+          <td>AIOps Engine (<span class="mono">server.py</span>)</td>
+          <td>Calculates rolling statistical <strong>Z-Scores</strong> (<span class="mono">Z = (x - μ) / σ</span>) across sliding 30-sample windows. Replaces static threshold alarms with dynamic variance baselines.</td>
+        </tr>
+        <tr>
+          <td><strong>UUID v4 (<span class="mono">uuid</span>)</strong></td>
+          <td>Payload Tokens (<span class="mono">payload_id</span>)</td>
+          <td>Generates unique 128-bit cryptographic IDs for each payload, guaranteeing idempotent deduplication when retrying after network outages.</td>
+        </tr>
+        <tr>
+          <td><strong>Tailwind CSS & Chart.js</strong></td>
+          <td>Frontends (<span class="mono">dashboard.html</span>, <span class="mono">egress_proof.html</span>)</td>
+          <td>Modern dark-mode UI with hardware-accelerated HTML5 canvas line graphs updating live every 2 seconds.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Section 4: Code Breakdown -->
+    <h2>4. Code Deep-Dive: What Each Component Executes</h2>
+
+    <div class="step-box">
+      <div class="step-title">1. <span class="mono">collector/data_policy.json</span> (The Security Contract)</div>
+      <p style="margin: 0;">
+        Defines the strict schema allowed across the network. Contains the allow-list: <span class="mono">payload_id</span>, <span class="mono">timestamp_utc</span>, <span class="mono">tenant_id</span>, <span class="mono">pseudonym_source_id</span>, <span class="mono">metrics</span>, <span class="mono">health_state</span>, and <span class="mono">alert_summary</span>. Strictly bans raw logs, database queries, and credentials.
+      </p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">2. <span class="mono">collector/collector.py</span> (Tier 1 Customer Collector)</div>
+      <ul>
+        <li><strong><span class="mono">store_raw_locally(...)</span>:</strong> Writes the unredacted telemetry record containing raw passwords directly to the local SQLite table <span class="mono">raw_telemetry</span>. This proves raw data stays on-premise.</li>
+        <li><strong><span class="mono">scrub_text(...)</span>:</strong> Regex engine that scans text and replaces sensitive patterns (<span class="mono">AKIAIOSFODNN7EXAMPLE</span> &rarr; <span class="mono">[REDACTED_AWS_KEY]</span>).</li>
+        <li><strong><span class="mono">transform_and_enforce_policy(...)</span>:</strong> Pseudonymizes internal hostnames (<span class="mono">prod-db-master.corp.internal</span> &rarr; <span class="mono">srv-node-db01</span>) and discards any field not explicitly on the allow-list.</li>
+        <li><strong><span class="mono">send_to_saas(...)</span>:</strong> Sends the clean metadata to SaaS over HTTP. If unreachable, it diverts the payload into the SQLite <span class="mono">outage_buffer</span> table.</li>
+        <li><strong><span class="mono">flush_outage_buffer(...)</span>:</strong> Background worker that continuously monitors connectivity and replays queued records in FIFO order upon reconnection.</li>
+        <li><strong><span class="mono">EgressProofHandler</span>:</strong> Serves the live Egress Proof Panel web interface on Port 8001.</li>
+      </ul>
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">3. <span class="mono">saas/server.py</span> (Tier 2 Central SaaS Platform & AIOps Core)</div>
+      <ul>
+        <li><strong><span class="mono">POST /api/v1/telemetry/ingest</span>:</strong> Verifies the Bearer token. Checks <span class="mono">payload_id</span> against <span class="mono">INGESTED_PAYLOAD_IDS</span>; if already processed, acknowledges 200 OK without corrupting metrics. Stores clean metadata in <span class="mono">saas_platform.db</span>.</li>
+        <li><strong><span class="mono">calculate_z_score(...)</span>:</strong> Statistical function calculating <span class="mono">Z = (x - mean) / std</span> over a 30-sample rolling window.</li>
+        <li><strong><span class="mono">run_aiops_evaluation(...)</span>:</strong> Flags anomalies if <span class="mono">Z > 2.5</span>. Correlates co-occurring spikes (e.g. CPU + Latency) into a single incident with confidence score and mitigation steps.</li>
+        <li><strong><span class="mono">compute_overall_health(...)</span>:</strong> Classifies health into 4 states: <em>Excellent, Good, Fair, Poor</em>. Automatically downgrades state if telemetry stops arriving for &gt;30s or collector heartbeat is lost for &gt;60s.</li>
+        <li><strong><span class="mono">POST /api/v1/remediation/approve</span>:</strong> Records operator approval of the mitigation action into the <span class="mono">remediation_audit</span> table.</li>
+      </ul>
+    </div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Section 5: Packet Lifecycle -->
+    <h2>5. The End-to-End Lifecycle of a Single Data Packet</h2>
+    <p>Follow the exact journey of one telemetry event through the system:</p>
+
+    <div class="step-box">
+      <div class="step-title">Step 1: Event Generation (Customer Host)</div>
+      A database server experiences a CPU spike (91.2%) and elevated round-trip latency (220ms). Its local log records: <span class="mono">"DB timeout: auth_token=sk_live_9988223344 on prod-db-master.corp.internal"</span>.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 2: Local On-Premise Storage (Privacy Guarantee)</div>
+      The complete raw record with plain secrets is stored into <span class="mono">collector_local.db</span> inside the customer VPC. It will <strong>never cross the network</strong>.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 3: Redaction & Policy Enforcement (Local Collector)</div>
+      The privacy engine scrubs <span class="mono">auth_token=[REDACTED_SECRET]</span>, masks the hostname to <span class="mono">srv-node-db01</span>, extracts numeric metrics, and strictly strips raw stack traces.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 4: Egress Proof Logging</div>
+      The scrubbed payload is recorded in the local Egress Ledger and rendered live on <span class="mono">http://localhost:8001</span> for compliance verification.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 5: Encrypted Ingestion & Deduplication (SaaS Platform)</div>
+      Transmitted to Port 8000 with a unique <span class="mono">payload_id</span>. SaaS verifies authentication, checks the deduplication cache, and indexes the event by its UTC timestamp.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 6: Statistical Analysis & Incident Correlation (AIOps)</div>
+      The AIOps engine detects that latency is <span class="mono">Z = +3.4σ</span> above baseline and CPU is <span class="mono">Z = +2.8σ</span>. Rather than creating 2 separate noisy alerts, it synthesizes them into: <em>"Correlated Incident: Service Congestion & Compute Saturation on srv-node-db01"</em>.
+    </div>
+
+    <div class="step-box">
+      <div class="step-title">Step 7: Operator Action & Audit Trail</div>
+      The operations engineer reviews the incident on <span class="mono">http://localhost:8000</span>, inspects the <strong>Why Flagged</strong> breakdown, and clicks <strong>"Approve Remediation"</strong>. The incident resolves and an entry is logged in the permanent audit trail.
+    </div>
+
+    <!-- Section 6: Test Scenarios -->
+    <h2>6. Live Demonstration Scenarios for Evaluators</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>What You Trigger (<span class="mono">inject_scenarios.py</span>)</th>
+          <th>Expected Demonstration to Prove to Judges</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Secret in Raw Log</strong></td>
+          <td>Press <span class="mono">1</span></td>
+          <td>Open <span class="mono">http://localhost:8001</span>: Raw side holds AWS key; Egress side holds <span class="mono">[REDACTED_AWS_KEY]</span>. Open <span class="mono">http://localhost:8000</span>: Zero secrets reach SaaS.</td>
+        </tr>
+        <tr>
+          <td><strong>2. SaaS Link Outage</strong></td>
+          <td>Click "Simulate Outage" on 8001</td>
+          <td>Buffer counter increases in SQLite. Click "Reconnect": Backlog replays with zero data loss and zero duplicates.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Failed Logins Burst</strong></td>
+          <td>Press <span class="mono">3</span></td>
+          <td>SaaS dashboard displays a Security Risk Indicator without exposing usernames or passwords.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Network Latency Spike</strong></td>
+          <td>Press <span class="mono">4</span></td>
+          <td>Latency spikes to 240ms on chart; AIOps flags Z-Score deviation and suggests route optimization.</td>
+        </tr>
+        <tr>
+          <td><strong>5. CPU Baseline Deviation</strong></td>
+          <td>Press <span class="mono">5</span></td>
+          <td>CPU spikes to 94%; AIOps flags anomaly and suggests worker thread restart.</td>
+        </tr>
+        <tr>
+          <td><strong>6. Alert Noise Reduction</strong></td>
+          <td>Press <span class="mono">6</span></td>
+          <td>Co-occurring CPU + Latency + Loss are merged into <strong>ONE incident card</strong>. Click "Approve Remediation" to test audit logging.</td>
+        </tr>
+        <tr>
+          <td><strong>7. Idempotent Retries</strong></td>
+          <td>Press <span class="mono">7</span></td>
+          <td>Identical payload sent twice; SaaS returns <span class="mono">duplicate_ignored</span> without creating duplicate database rows.</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</body>
+</html>
